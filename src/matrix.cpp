@@ -36,16 +36,199 @@ EigenCUDA::Matrix::Matrix(const Matrix &initializeWithObject)
             << __inputTimeUsed << "\n";
 }
 
+double EigenCUDA::Matrix::at(ull ith, ull jth) const {
+  if (ith < this->nrows and jth < this->ncols) {
+    return this->__Mat[ith][jth];
+  } else {
+    std::cerr << "[ ERR - at ]: Invalid indexing, at" << __LINE__ << " in file "
+              << __FILE__ << " in function " << __FUNCTION__ << " \n";
+    exit(EXIT_FAILURE);
+  }
+}
+
 ull EigenCUDA::Matrix::getRows() const { return this->nrows; }
 
 ull EigenCUDA::Matrix::getCols() const { return this->ncols; }
 
-void EigenCUDA::Matrix::setRows(ull param) { this->nrows = param; }
+void EigenCUDA::Matrix::setRows(ull param) {
 
-void EigenCUDA::Matrix::setCols(ull param) { this->ncols = param; }
+  if (this->nrows == param)
+    return; /* do nothing */
+
+  if (this->nrows < param) {
+
+    /* Create new matrix */
+    double **tempMatrix = nullptr;
+    tempMatrix = new double *[param];
+
+    for (size_t i = 0; i < param; ++i) {
+      tempMatrix[i] = new double[this->ncols];
+    }
+    /* Finish creating a new matrix */
+
+    /* Transfer data from old matrix to new matrix */
+    for (size_t i = 0; i < this->nrows; ++i) {
+      for (size_t j = 0; j < this->ncols; ++j) {
+        tempMatrix[i][j] = this->__Mat[i][j];
+      }
+    }
+    /* Finish transfer data from old matrix to new matrix */
+
+    /* Zero out all the new rows */
+    for (size_t i = nrows; i < param; ++i)
+      for (size_t j = 0; j < this->ncols; ++j)
+        tempMatrix[i][j] = 0;
+    /* Finish zeroing out all the new cols */
+
+    /* Delete old matrix */
+    for (ull i = 0; i < this->nrows; ++i) {
+      delete[] this->__Mat[i];
+      this->__Mat[i] = nullptr;
+    }
+
+    delete this->__Mat;
+    this->__Mat = nullptr;
+    /* Finish deleting old matrix */
+
+    /* Set pointer to new matrix */
+    this->__Mat = tempMatrix;
+    tempMatrix = nullptr;
+
+  } else if (this->nrows > param) {
+
+    /* Create new matrix */
+    double **tempMatrix = nullptr;
+    tempMatrix = new double *[param];
+
+    for (size_t i = 0; i < param; ++i) {
+      tempMatrix[i] = new double[this->ncols];
+    }
+    /* Finish creating a new matrix */
+
+    /* Transfer data from old matrix to new matrix */
+    for (size_t i = 0; i < param; ++i) {
+      for (size_t j = 0; j < this->ncols; ++j) {
+        tempMatrix[i][j] = this->__Mat[i][j];
+      }
+    }
+    /* Finish transfer data from old matrix to new matrix */
+
+    /* Delete old matrix */
+    for (ull i = 0; i < this->nrows; ++i) {
+      delete[] this->__Mat[i];
+      this->__Mat[i] = nullptr;
+    }
+
+    delete this->__Mat;
+    this->__Mat = nullptr;
+    /* Finish deleting old matrix */
+
+    /* Set pointer to new matrix */
+    this->__Mat = tempMatrix;
+    tempMatrix = nullptr;
+  }
+
+  /*
+   * The following works for when,
+   * - this->nrows == 0
+   * - this->nrows > param
+   * - this->nrows < param
+   */
+  this->nrows = param;
+
+  return;
+} // setRows()
+
+void EigenCUDA::Matrix::setCols(ull param) {
+
+  if (this->ncols == param)
+    return; // Do nothing
+
+  else if (this->ncols < param) {
+
+    /* Create new matrix */
+    double **tempMatrix = nullptr;
+    tempMatrix = new double *[this->nrows];
+
+    for (size_t i = 0; i < this->nrows; ++i) {
+      tempMatrix[i] = new double[param];
+    }
+    /* Finish creating a new matrix */
+
+    /* Transfer data from old matrix to new matrix */
+    for (size_t i = 0; i < this->nrows; ++i) {
+      for (size_t j = 0; j < this->ncols; ++j) {
+        tempMatrix[i][j] = this->__Mat[i][j];
+      }
+    }
+    /* Finish transfer data from old matrix to new matrix */
+
+    /* Zero out all the new cols */
+    for (size_t i = 0; i < this->nrows; ++i)
+      for (size_t j = this->ncols; j < param; ++j)
+        tempMatrix[i][j] = 0;
+    /* Finish zeroing out all the new cols */
+
+    /* Delete old matrix */
+    for (ull i = 0; i < this->nrows; ++i) {
+      delete[] this->__Mat[i];
+      this->__Mat[i] = nullptr;
+    }
+
+    delete this->__Mat;
+    this->__Mat = nullptr;
+    /* Finish deleting old matrix */
+
+    /* Set pointer to new matrix */
+    this->__Mat = tempMatrix;
+    tempMatrix = nullptr;
+
+  } else if (this->ncols > param) {
+
+    /* Create new matrix */
+    double **tempMatrix = nullptr;
+    tempMatrix = new double *[this->nrows];
+
+    for (size_t i = 0; i < this->nrows; ++i) {
+      tempMatrix[i] = new double[param];
+    }
+    /* Finish creating a new matrix */
+
+    /* Transfer data from old matrix to new matrix */
+    for (size_t i = 0; i < this->nrows; ++i) {
+      for (size_t j = 0; j < param; ++j) {
+        tempMatrix[i][j] = this->__Mat[i][j];
+      }
+    }
+    /* Finish transfer data from old matrix to new matrix */
+
+    /* Delete old matrix */
+    for (ull i = 0; i < this->nrows; ++i) {
+      delete[] this->__Mat[i];
+      this->__Mat[i] = nullptr;
+    }
+
+    delete this->__Mat;
+    this->__Mat = nullptr;
+    /* Finish deleting old matrix */
+
+    /* Set pointer to new matrix */
+    this->__Mat = tempMatrix;
+    tempMatrix = nullptr;
+  }
+
+  /*
+   * The following works for when,
+   * - this->ncols == 0
+   * - this->ncols > param
+   * - this->ncols < param
+   */
+  this->ncols = param;
+
+  return;
+} // setCols()
 
 void EigenCUDA::Matrix::init__MatWithZeroDistribution(void) {
-
   try {
     if (this->nrows == 0 or this->ncols == 0) {
       throw std::invalid_argument(
@@ -56,13 +239,24 @@ void EigenCUDA::Matrix::init__MatWithZeroDistribution(void) {
     std::cerr << "[ ERR - init__MatWithZeroDistribution ]: Initialization "
                  "called without setting either rows or columns "
                  "to be a number greater than 0 at line "
-              << __LINE__ << " in file " << __FILE__ << " in function " << __FUNCTION__ << " \n";
+              << __LINE__ << " in file " << __FILE__ << " in function "
+              << __FUNCTION__ << " \n";
     exit(EXIT_FAILURE);
   }
+
+  clock_t __start = clock();
 
   for (ull i = 0; i < this->nrows; ++i)
     for (ull j = 0; j < this->ncols; ++j)
       this->__Mat[i][i] = 0;
+
+  clock_t __end = clock();
+  double __inputTimeUsed = ((double)(__end - __start)) / CLOCKS_PER_SEC;
+  std::cout << "[MATRIX - <" << nrows << ", " << ncols
+            << "> @ ZERO_INITIALIZATION ] Time taken to get the matrix, "
+            << __inputTimeUsed << "\n";
+
+  return;
 }
 
 void EigenCUDA::Matrix::init__MatWithRandomDistribution(int lowerRange = -1,
@@ -77,7 +271,8 @@ void EigenCUDA::Matrix::init__MatWithRandomDistribution(int lowerRange = -1,
     std::cerr << "[ ERR - init__MatWithRandomDistribution ]: Initialization "
                  "called without setting either rows or columns "
                  "to be a number greater than 0 at line "
-              << __LINE__ << " in file " << __FILE__ << " in function " << __FUNCTION__ << " \n";
+              << __LINE__ << " in file " << __FILE__ << " in function "
+              << __FUNCTION__ << " \n";
     exit(EXIT_FAILURE);
   }
 
@@ -142,7 +337,8 @@ void EigenCUDA::Matrix::init__MatWithUniformDistribution(int lowerRange = -1,
     std::cerr << "[ ERR - init__MatWithUniformDistribution ]: Initialization "
                  "called without setting either rows or columns "
                  "to be a number greater than 0 at line "
-              << __LINE__ << " in file " << __FILE__ << " in function " << __FUNCTION__ << " \n";
+              << __LINE__ << " in file " << __FILE__ << " in function "
+              << __FUNCTION__ << " \n";
     exit(EXIT_FAILURE);
   }
 
@@ -309,6 +505,19 @@ void EigenCUDA::Matrix::operator=(const Matrix &rhs) {
 
     return;
   }
+}
+
+void EigenCUDA::Matrix::printMatrix(void) {
+  for (ull i = 0; i < this->nrows; ++i) {
+    printf("[ ");
+    for (ull j = 0; j < this->ncols; ++j) {
+      printf("%lf ", this->__Mat[i][j]);
+    }
+    printf("]\n");
+  }
+  puts("");
+
+  return;
 }
 
 EigenCUDA::Matrix::~Matrix() {

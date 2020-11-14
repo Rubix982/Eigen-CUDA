@@ -17,6 +17,8 @@ public:
 
   Matrix(const Matrix &initializeWithObject);
 
+  double at(ull ith, ull jth) const;
+
   ull getRows() const;
 
   ull getCols() const;
@@ -24,6 +26,9 @@ public:
   void setRows(ull param);
   
   void setCols(ull param);
+
+  // For testing purposes
+  void printMatrix(void);
 
   void init__MatWithZeroDistribution(void);
 
