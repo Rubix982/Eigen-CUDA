@@ -1,20 +1,16 @@
-// #include <iostream>
 #include "matrix.hpp"
+#include "kernel.cuh"
+#include <cstdio>
+
+#define N 128
+#define TPB 32
 
 int main(int argc, char const *argv[]) {
-//   EigenCUDA::Matrix testing(5, 5);
-//   testing.init__MatWithZeroDistribution();
-//   testing.printMatrix();
+  launchKernel<<<N/TPB, TPB>>>();
 
-//   testing.init__MatWithUniformDistribution(10, 100);
-//   testing.printMatrix();
+  EigenCUDA::Matrix MatA(4, 4);
+  MatA.init__MatWithUniformDistribution(1, 100, true);
+  MatA.printMatrix();
 
-//   testing.setRows(4);
-//   testing.printMatrix();
-
-//   testing.setCols(2);
-//   testing.printMatrix();
-
-  std::cout << "Hello, World!\n";
   return 0;
 }

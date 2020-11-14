@@ -259,8 +259,8 @@ void EigenCUDA::Matrix::init__MatWithZeroDistribution(void) {
   return;
 }
 
-void EigenCUDA::Matrix::init__MatWithRandomDistribution(int lowerRange = -1,
-                                                        int upperRange = 1) {
+void EigenCUDA::Matrix::init__MatWithRandomDistribution(
+    int lowerRange = -1, int upperRange = 1, bool debugInfo = false) {
 
   try {
     if (this->nrows == 0 or this->ncols == 0) {
@@ -316,18 +316,20 @@ void EigenCUDA::Matrix::init__MatWithRandomDistribution(int lowerRange = -1,
       this->__Mat[i][j] = n;
     }
 
-    clock_t __end = clock();
-    double __inputTimeUsed = ((double)(__end - __start)) / CLOCKS_PER_SEC;
-    std::cout << "[MATRIX - <" << nrows << ", " << ncols
-              << "> @ RANDOM_DISTRIBUTION ] Time taken to get the matrix, "
-              << __inputTimeUsed << "\n";
+    if (debugInfo) {
+      clock_t __end = clock();
+      double __inputTimeUsed = ((double)(__end - __start)) / CLOCKS_PER_SEC;
+      std::cout << "[MATRIX - <" << nrows << ", " << ncols
+                << "> @ RANDOM_DISTRIBUTION ] Time taken to get the matrix, "
+                << __inputTimeUsed << "\n";
+    }
 
     return;
   }
 }
 
-void EigenCUDA::Matrix::init__MatWithUniformDistribution(int lowerRange = -1,
-                                                         int upperRange = 1) {
+void EigenCUDA::Matrix::init__MatWithUniformDistribution(
+    int lowerRange = -1, int upperRange = 1, bool debugInfo = false) {
   try {
     if (this->nrows == 0 or this->ncols == 0) {
       throw std::invalid_argument(
@@ -363,11 +365,13 @@ void EigenCUDA::Matrix::init__MatWithUniformDistribution(int lowerRange = -1,
     for (ull j = 0; j < ncols; ++j)
       this->__Mat[i][j] = __distrib(__gen);
 
-  clock_t __end = clock();
-  double __inputTimeUsed = ((double)(__end - __start)) / CLOCKS_PER_SEC;
-  std::cout << "[MATRIX - <" << nrows << ", " << ncols
-            << "> @ UNIFORM_DISTRIBUTION ] Time taken to get the matrix, "
-            << __inputTimeUsed << "\n";
+  if (debugInfo) {
+    clock_t __end = clock();
+    double __inputTimeUsed = ((double)(__end - __start)) / CLOCKS_PER_SEC;
+    std::cout << "[MATRIX - <" << nrows << ", " << ncols
+              << "> @ UNIFORM_DISTRIBUTION ] Time taken to get the matrix, "
+              << __inputTimeUsed << "\n";
+  }
 
   return;
 }
@@ -443,7 +447,7 @@ EigenCUDA::Matrix EigenCUDA::Matrix::operator*(const Matrix &rhs) {
   return productMatrix;
 }
 
-const bool EigenCUDA::Matrix::operator==(const Matrix &rhs) {
+bool EigenCUDA::Matrix::operator==(const Matrix &rhs) {
   if (this != &rhs) {
     if (this->getCols() != rhs.getCols() or this->getRows() != rhs.getRows()) {
       std::cout << "Invalid number of cols AND/OR rows\n";

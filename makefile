@@ -1,4 +1,5 @@
-GCC = /usr/bin/gcc
+GCC = /usr/bin/g++
+GCC_FLAGS = -std=gnu++17
 NVCC = /usr/local/cuda/bin/nvcc
 NVCC_FLAGS = -g -G -Xcompiler -Wall
 INC = -I/usr/local/cuda/samples/common/inc
@@ -11,21 +12,19 @@ all: dir main.exe
 dir:
 	@ mkdir -p $(BUILDDIR)
 
-main.exe: $(BUILDDIR)/cuda.o $(BUILDDIR)/matrix.o $(BUILDDIR)/kernel.o
+# $(BUILDDIR)/main.o
+main.exe: $(BUILDDIR)/kernel.o $(BUILDDIR)/matrix.o 
 	@ $(NVCC) $^ -o $@
 	@ mv *.exe $(BUILDDIR)
 
-$(BUILDDIR)/kernel.o: $(SOURCEDIR)/kernel.cu $(SOURCEDIR)/kernel.hpp
+$(BUILDDIR)/kernel.o: $(SOURCEDIR)/kernel.cu $(SOURCEDIR)/kernel.cuh
 	@ $(NVCC) $(NVCC_FLAGS) $(INC) -c $< -o $@
 
 $(BUILDDIR)/matrix.o: $(SOURCEDIR)/matrix.cpp $(SOURCEDIR)/matrix.hpp
 	@ $(NVCC) $(NVCC_FLAGS) $(INC) -c $< -o $@
 
-$(BUILDDIR)/cuda.o: $(SOURCEDIR)/cudaMultiply.cpp $(SOURCEDIR)/cudaMultiply.hpp
-	@ $(NVCC) $(NVCC_FLAGS) $(INC) -c $< -o $@
-
 run: all
-	./build/main.exe
+	@ ./build/main.exe
 
 clean: 
 	@ rm -rf $(BUILDDIR)

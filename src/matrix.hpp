@@ -24,7 +24,7 @@ public:
   ull getCols() const;
 
   void setRows(ull param);
-  
+
   void setCols(ull param);
 
   // For testing purposes
@@ -32,9 +32,11 @@ public:
 
   void init__MatWithZeroDistribution(void);
 
-  void init__MatWithRandomDistribution(int lowerRange, int upperRange);
+  void init__MatWithRandomDistribution(int lowerRange, int upperRange,
+                                       bool debugInfo);
 
-  void init__MatWithUniformDistribution(int lowerRange, int upperRange);
+  void init__MatWithUniformDistribution(int lowerRange, int upperRange,
+                                        bool debugInfo);
 
   // For scaler operations
   EigenCUDA::Matrix operator+(double scalar);
@@ -49,7 +51,7 @@ public:
 
   EigenCUDA::Matrix operator*(const Matrix &rhs);
 
-  const bool operator==(const Matrix &rhs);
+  bool operator==(const Matrix &rhs);
 
   void operator=(const Matrix &rhs);
 
