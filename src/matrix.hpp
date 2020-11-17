@@ -57,7 +57,7 @@ public:
 
   ~Matrix();
 
-private:
+// private:
   double **__Mat;
   ull nrows;
   ull ncols;
