@@ -1,5 +1,3 @@
-# GCC = /usr/bin/g++
-# GCC_FLAGS = -std=gnu++17
 NVCC = /usr/local/cuda/bin/nvcc
 NVCC_FLAGS = -g -G -Xcompiler -Wall
 INC = -I/usr/local/cuda/samples/common/inc
@@ -17,7 +15,7 @@ main.exe: $(BUILDDIR)/kernel.o $(BUILDDIR)/matrix.o
 	@ $(NVCC) $(NVCC_FLAGS) $(INC) $^ -o $@
 	@ mv *.exe $(BUILDDIR)
 
-$(BUILDDIR)/kernel.o: $(SOURCEDIR)/kernel.cu
+$(BUILDDIR)/kernel.o: $(SOURCEDIR)/kernel.cu $(SOURCEDIR)/kernelAux.cuh
 	@ $(NVCC) $(NVCC_FLAGS) $(INC) -c $< -o $@
 
 $(BUILDDIR)/matrix.o: $(SOURCEDIR)/matrix.cpp $(SOURCEDIR)/matrix.hpp

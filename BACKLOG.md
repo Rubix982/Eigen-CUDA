@@ -1,6 +1,10 @@
-# Ideas
+# Features
 
-- From algorithms, learn to implement how to optimize matrix multiplications for lesser operations
+- Matrix mulitplication with matrices
+- Matrix multiplication by scalar
+- Matrix Addition
+- Matrix Substraction
+- Matrix division by scalar
 
 # Misc:
 
