@@ -27,7 +27,7 @@ int main(int argc, char const *argv[]) {
   for (int i = 0; i < MATRIX_DIMENSIONS; ++i)
     finalMat[i] = new double[MATRIX_DIMENSIONS];
 
-  // cudaMalloc(&finalMat, N * sizeof(double));
+  cudaMalloc(&finalMat, N * sizeof(double));
 
   dim3 gridSize(N / (2 * TPB), N / (2 * TPB), 1);
   dim3 blockSize(TPB / 2, TPB / 2, 1);
@@ -50,7 +50,7 @@ int main(int argc, char const *argv[]) {
   delete[] finalMat;
   finalMat = NULL;
 
-  // cudaFree(finalMat);
+  cudaFree(finalMat);
 
   return 0;
 }
